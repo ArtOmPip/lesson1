@@ -1,15 +1,17 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QHBoxLayout, QVBoxLayout, QPushButton
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QHBoxLayout, QVBoxLayout, QPushButton, QMessageBox
 from PyQt5.QtCore import Qt
 from innstr import *
+from PyQt5.QtGui import QFont
 #инициализация глобальных переменных
 name = ''
 age = 7
-p1, p2, p3 = 0, 0, 0
+p1, p2, p3 = 1, 1, 1
 
 
 def error_init(intg):
     try:
-        int(intg)
+        return int(intg)
+    
     except:
         return False
 
@@ -38,12 +40,14 @@ class InstrScr(QWidget):
     def initUi(self):
         #создание чего-то основного
         self.lbl_instr = QLabel(txt_instruction)
+        self.lbl_instr.setFont(QFont(None, 15))
         self.lbl_name = QLabel('Введите имя:')
         self.inp_name = QLineEdit()
         self.lbl_age = QLabel('Введите возраст:')
         self.inp_age = QLineEdit('7')
         self.btn = QPushButton('Начать')
-        
+        self.btn.setStyleSheet('background: rgb(73, 89, 94)')
+
         #создание линий
         self.line = QVBoxLayout()
         self.h_line_name = QHBoxLayout()
@@ -67,13 +71,24 @@ class InstrScr(QWidget):
         global name, age
         name = self.inp_name.text()
         age = error_init(self.inp_age.text())
-        self.mw = PulsScr()
-        self.hide()
+        if age == False or age < 7:
+            msg = QMessageBox()
+            msg.setWindowTitle("Ошибка возраста")
+            msg.setText("Возраст должен быть больше 7 лет и состоять из цифр!")
+            msg.setIcon(msg.Warning)
+            msg.exec_()
+            age = 7
+            self.inp_age.setText(str(age))
+        else:
+            self.tw = PulsScr()
+            self.hide()
+
 
     def set_appear(self):
         self.setWindowTitle(txt_title)
         self.resize(win_w, win_h)
         self.move(win_x, win_y)
+        self.setStyleSheet('background-color: rgb(61, 58, 96)')
 
 #второй экран(Состояние покоя)
 class PulsScr(QWidget):
@@ -88,6 +103,7 @@ class PulsScr(QWidget):
         self.setWindowTitle(txt_title)
         self.resize(win_w, win_h)
         self.move(win_x, win_y)
+        self.setStyleSheet('background-color: rgb(61, 58, 96)')
 
     def initUi(self):
         self.instr = QLabel(txt_starttest1)
@@ -102,8 +118,9 @@ class PulsScr(QWidget):
         self.line.addLayout(self.h_line)
         self.line.addWidget(self.btn_next, alignment = Qt.AlignCenter)
         self.setLayout(self.line)
-    
+        self.btn_next.setStyleSheet('background: rgb(73, 89, 94)')   
         self.layout_line = QVBoxLayout()
+        self.instr.setFont(QFont(None, 15))
 
     def connect(self):
         self.btn_next.clicked.connect(self.next_click)
@@ -111,14 +128,24 @@ class PulsScr(QWidget):
     def next_click(self):
         global p1
         p1 = error_init(self.line_p1.text())
-        self.mw = ChekSits()
-        self.hide()
+        if p1 == False or p1 <= 0:
+            msg = QMessageBox()
+            msg.setWindowTitle("Ошибка пульса")
+            msg.setText("Пульс должен быть больше 0 и соостоять из цифр!")
+            msg.setIcon(msg.Warning)
+            msg.exec_()
+            p1 = 0
+            self.line_p1.setText(str(p1))
+        else:
+            self.tw = ChekSits()
+            self.hide()
+
 
     def set_appear(self):
         self.setWindowTitle(txt_title)
         self.resize(win_w, win_h)
         self.move(win_x, win_y) 
-
+        self.setStyleSheet('background-color: rgb(61, 58, 96)')
 
 
 #третий экран
@@ -142,6 +169,8 @@ class ChekSits(QWidget):
         self.line.addWidget(self.instr, alignment = Qt.AlignCenter)
         self.line.addWidget(self.btn_next, alignment = Qt.AlignCenter)
         self.setLayout(self.line)
+        self.btn_next.setStyleSheet('background: rgb(73, 89, 94)')   
+        self.instr.setFont(QFont(None, 15))
 
     def connect(self):
         self.btn_next.clicked.connect(self.next_click)
@@ -154,7 +183,7 @@ class ChekSits(QWidget):
         self.setWindowTitle(txt_title)
         self.resize(win_w, win_h)
         self.move(win_x, win_y) 
-
+        self.setStyleSheet('background-color: rgb(61, 58, 96)')
 
 #четвёртый экран
 class PulsScr2(QWidget):
@@ -179,7 +208,8 @@ class PulsScr2(QWidget):
         self.inp_p3 = QLineEdit('0')
         
         #создание линий
-        self.line1= QHBoxLayout()
+        self.line1 = QHBoxLayout()
+        self.line1.addStretch(5)
         self.line2 = QHBoxLayout()
         
         self.line1.addWidget(self.lbl_p2)
@@ -193,6 +223,7 @@ class PulsScr2(QWidget):
         self.line.addLayout(self.line2)
         self.line.addWidget(self.btn_next, alignment= Qt.AlignCenter)
         self.setLayout(self.line)       
+        self.btn_next.setStyleSheet('background: rgb(73, 89, 94)')   
 
     def connect(self):
         self.btn_next.clicked.connect(self.next_click)
@@ -201,14 +232,31 @@ class PulsScr2(QWidget):
         global p2, p3
         p2 = error_init(self.inp_p2.text())
         p3 = error_init(self.inp_p3.text())
-        self.mw = Result()
-        self.hide()
+        if p2 == False or p2 <= 0:
+            msg = QMessageBox()
+            msg.setWindowTitle("Ошибка пульсв")
+            msg.setText("Пульс должен быть больше 0 и соостоять из цифр!")
+            msg.setIcon(msg.Warning)
+            msg.exec_()
+            p2 = 0
+            self.inp_p2.setText(str(p2))
+        elif p3 == False or p3 <= 0:
+            msg = QMessageBox()
+            msg.setWindowTitle("Ошибка пульсв")
+            msg.setText("Пульс после отдыха должен быть больше 0 и соостоять из цифр!")
+            msg.setIcon(msg.Warning)
+            msg.exec_()
+            p3 = 0
+            self.inp_p3.setText(str(p3))
+        else:
+            self.tw = Result()
+            self.hide()
 
     def set_appear(self):
         self.setWindowTitle(txt_title)
         self.resize(win_w, win_h)
         self.move(win_x, win_y)
-
+        self.setStyleSheet('background-color: rgb(61, 58, 96)')
 
 #пятый экран
 class Result(QWidget):
@@ -293,7 +341,7 @@ class Result(QWidget):
         self.setWindowTitle(txt_title)
         self.resize(win_w, win_h)
         self.move(win_x, win_y)
-
+        self.setStyleSheet('background-color: rgb(62, 72, 105)')
 app =  QApplication([])
 mw = InstrScr()
 app.exec_()
